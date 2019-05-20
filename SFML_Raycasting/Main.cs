@@ -2,13 +2,12 @@
 using SFML.Window;
 using SFML.Graphics;
 using SFML.System;
-using Raycasting;
 
-namespace Raycasting_SMFL
+namespace Raycasting
 {
     class Program
     {
-        static Game game = new Game();
+        static Game game;
         static Direction[] dir = { Direction.None, Direction.None, Direction.None, Direction.None };
         static RenderWindow app = new RenderWindow(new VideoMode(800, 600), "Raycating game");
 
@@ -43,7 +42,10 @@ namespace Raycasting_SMFL
                     break;
 
                 case Keyboard.Key.Space:
-                    game.toggleColors();
+                    if (game != null)
+                    {
+                        game.toggleColors();
+                    }
                     break;
 
                 case Keyboard.Key.Escape:
@@ -83,13 +85,12 @@ namespace Raycasting_SMFL
             app.KeyReleased += OnKeyUp;
 
             app.SetMouseCursorVisible(false);
-
             app.SetFramerateLimit(60);
-
             app.RequestFocus();
 
-            Clock clock = new Clock();
-            clock.Restart();
+            game = new Game(app);
+
+            var clock = new Clock();
 
             int mouseX = Mouse.GetPosition().X;
             while (app.IsOpen)
@@ -114,7 +115,7 @@ namespace Raycasting_SMFL
 
                 app.Clear(new Color(135, 206, 235));
 
-                game.Draw(app);
+                game.Draw();
 
                 app.Display();
             }
