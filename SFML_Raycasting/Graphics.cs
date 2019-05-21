@@ -10,7 +10,7 @@ namespace Raycasting
 
         public Graphics(RenderWindow app)
         {
-            this.app = app;
+            UpdateApp(app);
         }
 
         private void CreateRays(int width, Player player)
@@ -37,12 +37,17 @@ namespace Raycasting
             }
         }
 
+        public void UpdateApp(RenderWindow app)
+        {
+            this.app = app;
+        }
+
         public void Draw(Player player, GameObject[] objects)
         {
-            float width = app.DefaultView.Size.X;
-            float height = app.DefaultView.Size.Y;
+            float width = app.Size.X;
+            float height = app.Size.Y;
 
-            RectangleShape rect = new RectangleShape(new Vector2f(width, height / 2));
+            var rect = new RectangleShape(new Vector2f(width, height / 2));
             rect.FillColor = new Color(100, 100, 100);
             rect.Position = new Vector2f(0f, height / 2);
 

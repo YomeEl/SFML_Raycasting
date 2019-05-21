@@ -4,6 +4,6 @@ namespace Raycasting
 {
     interface GameObject
     {
-        void Draw(RenderWindow app, float horPos, float height);
+        void Draw(RenderWindow app, int horPos, float height);
     }
 }

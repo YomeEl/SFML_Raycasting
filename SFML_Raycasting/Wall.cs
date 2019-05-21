@@ -98,15 +98,15 @@ namespace Raycasting
 
         [NonSerialized]
         float u;
-        public void Draw(RenderWindow app, float horPos, float height, float u)
+        public void Draw(RenderWindow app, int horPos, float height, float u)
         {
             this.u = u;
             Draw(app, horPos, height);
         }
 
-        public void Draw(RenderWindow app, float horPos, float height)
+        public void Draw(RenderWindow app, int horPos, float height)
         {
-            float center = app.DefaultView.Center.Y;
+            float center = app.GetView().Center.Y;
 
             if (toggleColors)
             {

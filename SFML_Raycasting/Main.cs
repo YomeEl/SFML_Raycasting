@@ -9,7 +9,9 @@ namespace Raycasting
     {
         static Game game;
         static Direction[] dir = { Direction.None, Direction.None, Direction.None, Direction.None };
-        static RenderWindow app = new RenderWindow(new VideoMode(800, 600), "Raycating game");
+        static RenderWindow app;
+        static bool fullscreen = false;
+        static bool requestScreenModeChange = false;
 
         static void OnClose(object sender, EventArgs e)
         {
@@ -38,7 +40,7 @@ namespace Raycasting
                     break;
 
                 case Keyboard.Key.F:
-                    
+                    requestScreenModeChange = true;
                     break;
 
                 case Keyboard.Key.Space:
@@ -50,7 +52,7 @@ namespace Raycasting
 
                 case Keyboard.Key.Escape:
                     app.Close();
-                    break;
+                    break;    
             }
         }
 
@@ -76,9 +78,24 @@ namespace Raycasting
             }
         }
 
-        static void Main(string[] args)
+        static void CreateWindow()
         {
-            Settings.Drawing.WallHeight = (int)app.DefaultView.Size.Y;
+            fullscreen = !fullscreen;
+
+            if (app != null)
+            {
+                app.Closed -= OnClose;
+                app.KeyPressed -= OnKeyDown;
+                app.KeyReleased -= OnKeyUp;
+
+                app.Dispose();
+                app = null;
+            }
+
+            VideoMode vm = new VideoMode(VideoMode.DesktopMode.Width, VideoMode.DesktopMode.Height);
+            app = new RenderWindow(fullscreen ? vm : new VideoMode(800, 600), "Raycating game", Styles.None);
+
+            Settings.Drawing.WallHeight = app.Size.Y;
 
             app.Closed += OnClose;
             app.KeyPressed += OnKeyDown;
@@ -87,6 +104,11 @@ namespace Raycasting
             app.SetMouseCursorVisible(false);
             app.SetFramerateLimit(60);
             app.RequestFocus();
+        }
+
+        static void Main(string[] args)
+        {
+            CreateWindow();
 
             game = new Game(app);
 
@@ -95,28 +117,38 @@ namespace Raycasting
             int mouseX = Mouse.GetPosition().X;
             while (app.IsOpen)
             {
-                app.DispatchEvents();
-
-                game.RotatePlayer((Mouse.GetPosition().X - mouseX) * (float)(Math.PI / 360));
-
-                var center = app.DefaultView.Center;
-                Mouse.SetPosition(new Vector2i((int)center.X + app.Position.Y, (int)center.Y + app.Position.X));
-                mouseX = Mouse.GetPosition().X;
-
-                foreach (Direction d in dir)
+                if (app.HasFocus())
                 {
-                    if (d != Direction.None)
+                    app.DispatchEvents();
+
+                    game.RotatePlayer((Mouse.GetPosition().X - mouseX) * (float)(Math.PI / 360));
+
+                    var center = app.GetView().Center;
+                    Mouse.SetPosition(new Vector2i((int)center.X + app.Position.Y, (int)center.Y + app.Position.X));
+                    mouseX = Mouse.GetPosition().X;
+
+                    foreach (Direction d in dir)
                     {
-                        game.MovePlayer(d, clock.ElapsedTime.AsMilliseconds());
+                        if (d != Direction.None)
+                        {
+                            game.MovePlayer(d, clock.ElapsedTime.AsMilliseconds());
+                        }
+                    }
+                    clock.Restart();
+
+                    app.Clear(new Color(135, 206, 235));
+
+                    game.Draw();
+
+                    app.Display();
+
+                    if (requestScreenModeChange)
+                    {
+                        CreateWindow();
+                        game.UpdateApp(app);
+                        requestScreenModeChange = false;
                     }
                 }
-                clock.Restart();
-
-                app.Clear(new Color(135, 206, 235));
-
-                game.Draw();
-
-                app.Display();
             }
         }
     }

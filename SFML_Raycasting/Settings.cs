@@ -7,7 +7,7 @@ namespace Raycasting
         public static class Drawing
         {
             public static QualitySettings Quality = QualitySettings.High;
-            public static int WallHeight;
+            public static uint WallHeight;
         }
 
         public static class Player

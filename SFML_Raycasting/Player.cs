@@ -99,7 +99,7 @@ namespace Raycasting
             }
         }
 
-        public void Draw(RenderWindow app, float horPos, float height)
+        public void Draw(RenderWindow app, int horPos, float height)
         {
 
         }
