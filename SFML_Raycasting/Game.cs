@@ -17,7 +17,7 @@
 
         public Game(SFML.Graphics.RenderWindow app)
         {
-            Serializer.Deserialize(out map, "map1.dat");
+            Serializer.Deserialize(out map, "Maps/map1.dat");
             map.RestoreColors();
 
             player = new Player(map.StartPosition);
