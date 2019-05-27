@@ -1,10 +1,9 @@
 ﻿using System;
-using SFML.Graphics;
 
 namespace Raycasting
 {
     [Serializable]
-    class Player : GameObject
+    class Player
     {
         private Vector position;
         private Vector rotation;
@@ -97,11 +96,6 @@ namespace Raycasting
                     position += right_rot * speed * dist;
                     break;
             }
-        }
-
-        public void Draw(RenderWindow app, int horPos, float height)
-        {
-
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using SFML.Graphics;
 using SFML.System;
+using System.Collections.Generic;
 
 namespace Raycasting
 {
@@ -19,12 +20,12 @@ namespace Raycasting
             dir.Rotate(-Settings.Player.FOV / 2);
 
             width /= (int)Settings.Drawing.Quality;
-            if (rays == null || rays.Length != width)
+            if (rays == null || rays.Length != width + 1)
             {
-                rays = new Ray[width];
+                rays = new Ray[width + 1];
             }
 
-            for (int i = 0; i < width; i++)
+            for (int i = 0; i <= width; i++)
             {
                 Ray r = new Ray(player.Position, new Vector(dir));
                 r.X = i * (int)Settings.Drawing.Quality;
@@ -55,6 +56,8 @@ namespace Raycasting
 
             CreateRays((int)width, player);
 
+            var vertices = new List<Vertex>();
+
             foreach (Ray r in rays)
             {
                 Vector closestIntersection = null;
@@ -74,9 +77,10 @@ namespace Raycasting
                     u /= Vector.Distance(closestWall.A, closestWall.B);
                     float dist = Vector.Distance(player.Position, closestIntersection);
                     dist *= Vector.Cos(r.Direction, player.Rotation);
-                    closestWall.Draw(app, r.X, Settings.Drawing.WallHeight / dist, u);
+                    vertices.AddRange(closestWall.GetVertices((int)app.Size.Y, r.X, (int)(Settings.Drawing.WallHeight / dist), u));
                 }
             }
+            app.Draw(vertices.ToArray(), PrimitiveType.Lines);
         }
     }
 }

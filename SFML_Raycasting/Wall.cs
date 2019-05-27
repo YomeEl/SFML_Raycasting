@@ -37,7 +37,7 @@ namespace Raycasting
         private List<MyColor> colors = new List<MyColor>();
         
         [NonSerialized]
-        public bool toggleColors = true;
+        public bool toggleTextures = true;
 
         public Wall(Color color, float x1, float y1, float x2, float y2)
         {
@@ -96,39 +96,66 @@ namespace Raycasting
             }
         }
 
-        [NonSerialized]
-        float u;
-        public void Draw(RenderWindow app, int horPos, float height, float u)
+        public Vertex[] GetVertices(int viewHeight, int horPos, int height, float u)
         {
-            this.u = u;
-            Draw(app, horPos, height);
-        }
+            float center = viewHeight / 2;
 
-        public void Draw(RenderWindow app, int horPos, float height)
-        {
-            float center = app.GetView().Center.Y;
+            var vertices = new Stack<Vertex>();
 
-            if (toggleColors)
+            if (toggleTextures)
             {
-                Vertex[] line = new Vertex[2 * (int)Settings.Drawing.Quality];
+                int h;
+                int shift;
+                if (height > viewHeight)
+                {
+                    h = viewHeight;
+                    shift = (height - viewHeight) / 2;
+                }
+                else
+                {
+                    h = height;
+                    shift = 0;
+                }
+                int x = (int)(Textures.WallTexture.GetLength(0) * u);
+                if (u == 1)
+                {
+                    x--;
+                }
+                float pos = center - h / 2;
+                float k = Textures.WallTexture.GetLength(1) / (float)height;
+                Vector2f lastpos = new Vector2f();
                 for (int i = 0; i < (int)Settings.Drawing.Quality; i++)
                 {
-                    Color col = colors[(int)((colors.Count - 1) * u)].Color;
-                    line[2 * i] = new Vertex(new Vector2f(horPos + i, center + height / 2), col);
-                    line[2 * i + 1] = new Vertex(new Vector2f(horPos + i, center - height / 2), col);
+                    for (int j = 0; j < h; j++)
+                    {
+                        Color col = Textures.WallTexture[x, (int)((j + shift) * k)];
+                        if (vertices.Count == 0 || vertices.Peek().Color != col)
+                        {
+                            if (vertices.Count != 0)
+                            {
+                                vertices.Push(new Vertex(new Vector2f(horPos + i, pos + j), vertices.Peek().Color));
+                            }
+                            vertices.Push(new Vertex(new Vector2f(horPos + i, pos + j), col));
+                        }
+                        lastpos.X = horPos + i;
+                        lastpos.Y = pos + j;
+                    }
                 }
-                app.Draw(line, 0, (uint)line.Length, PrimitiveType.Lines);
+                if (vertices.Count % 2 != 0)
+                {
+                    vertices.Push(new Vertex(lastpos, vertices.Peek().Color));
+                }
             }
             else
             {
-                Vertex[] line = new Vertex[2 * (int)Settings.Drawing.Quality];
                 for (int i = 0; i < (int)Settings.Drawing.Quality; i++)
                 {
-                    line[0] = new Vertex(new Vector2f(horPos, center + height / 2), color.Color);
-                    line[1] = new Vertex(new Vector2f(horPos, center - height / 2), color.Color);
+                    vertices.Push(new Vertex(new Vector2f(horPos, center + height / 2), color.Color));
+                    vertices.Push(new Vertex(new Vector2f(horPos, center - height / 2), color.Color));
                 }
-                app.Draw(line, 0, (uint)line.Length, PrimitiveType.Lines);
             }
+
+            return vertices.ToArray();
         }
     }
 }

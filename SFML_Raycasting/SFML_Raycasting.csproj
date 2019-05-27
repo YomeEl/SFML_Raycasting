@@ -37,7 +37,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
+    <Prefer32Bit>true</Prefer32Bit>
     <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -87,6 +87,7 @@
     <Compile Include="Ray.cs" />
     <Compile Include="Serializer.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="Textures.cs" />
     <Compile Include="Vector.cs" />
     <Compile Include="Wall.cs" />
   </ItemGroup>

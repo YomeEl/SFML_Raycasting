@@ -46,7 +46,7 @@ namespace Raycasting
                 case Keyboard.Key.Space:
                     if (game != null)
                     {
-                        game.toggleColors();
+                        game.toggleTextures();
                     }
                     break;
 
@@ -108,9 +108,12 @@ namespace Raycasting
 
         static void Main(string[] args)
         {
+            Textures.Load();
+
             CreateWindow();
 
             game = new Game(app);
+            game.toggleTextures();
 
             var clock = new Clock();
 

@@ -28,11 +28,11 @@
             UpdateApp = graphics.UpdateApp;
         }
 
-        public void toggleColors()
+        public void toggleTextures()
         {
             foreach (Wall w in map.Objects)
             {
-                w.toggleColors = !w.toggleColors;
+                w.toggleTextures = !w.toggleTextures;
             }
         }
 
