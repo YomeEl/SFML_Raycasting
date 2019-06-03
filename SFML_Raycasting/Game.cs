@@ -17,9 +17,7 @@
 
         public Game(SFML.Graphics.RenderWindow app)
         {
-            //Serializer.Deserialize(out map, "Maps/map1.dat");
-            map = new Map();
-            map.InitializeTestMap();
+            Serializer.Deserialize(out map, "Maps/map1.dat");
 
             player = new Player(map.StartPosition);
             graphics = new Graphics(app);
