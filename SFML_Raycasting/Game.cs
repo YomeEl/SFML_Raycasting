@@ -17,8 +17,9 @@
 
         public Game(SFML.Graphics.RenderWindow app)
         {
-            Serializer.Deserialize(out map, "Maps/map1.dat");
-            map.RestoreColors();
+            //Serializer.Deserialize(out map, "Maps/map1.dat");
+            map = new Map();
+            map.InitializeTestMap();
 
             player = new Player(map.StartPosition);
             graphics = new Graphics(app);
@@ -26,14 +27,6 @@
             MovePlayer = player.Move;
             RotatePlayer = player.Rotation.Rotate;
             UpdateApp = graphics.UpdateApp;
-        }
-
-        public void toggleTextures()
-        {
-            foreach (Wall w in map.Objects)
-            {
-                w.toggleTextures = !w.toggleTextures;
-            }
         }
 
         public void Draw()

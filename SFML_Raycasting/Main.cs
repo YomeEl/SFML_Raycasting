@@ -43,13 +43,6 @@ namespace Raycasting
                     requestScreenModeChange = true;
                     break;
 
-                case Keyboard.Key.Space:
-                    if (game != null)
-                    {
-                        game.toggleTextures();
-                    }
-                    break;
-
                 case Keyboard.Key.Escape:
                     app.Close();
                     break;    
@@ -113,7 +106,6 @@ namespace Raycasting
             CreateWindow();
 
             game = new Game(app);
-            game.toggleTextures();
 
             var clock = new Clock();
 
@@ -138,8 +130,6 @@ namespace Raycasting
                         }
                     }
                     clock.Restart();
-
-                    app.Clear(new Color(135, 206, 235));
 
                     game.Draw();
 

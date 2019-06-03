@@ -58,7 +58,11 @@
     <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />
+    <Reference Include="netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Dlls\netstandard.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="sfml-audio">
       <HintPath>..\Dlls\sfml-audio.dll</HintPath>
       <Private>False</Private>
