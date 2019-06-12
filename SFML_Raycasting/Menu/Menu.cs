@@ -81,7 +81,7 @@ namespace Raycasting
             }
             else
             {
-                b.Text.FillColor = new Color(128, 128, 128);
+                b.Text.FillColor = new Color(180, 128, 128);
             }
         }
 
@@ -124,6 +124,12 @@ namespace Raycasting
             buttons.Add(b_loadGame);
             buttons.Add(b_settings);
             buttons.Add(b_quit);
+
+            foreach (Button b in buttons)
+            {
+                b.Text.OutlineThickness = 1;
+                b.Text.OutlineColor = Color.Black;
+            }
         }
 
         public void Draw()

@@ -11,6 +11,9 @@ namespace Raycasting
         static Menu menu;
         static Direction[] dir = { Direction.None, Direction.None, Direction.None, Direction.None };
         static RenderWindow app;
+
+        static Texture background;
+
         static bool fullscreen = false;
         static bool requestScreenModeChange = false;
         static bool showMenu = true;
@@ -108,6 +111,7 @@ namespace Raycasting
             app.MouseButtonPressed += onMouseButtonPressed;
 
             app.SetFramerateLimit(60);
+            app.SetMouseCursorVisible(showMenu);
             app.RequestFocus();
         }
 
@@ -119,6 +123,10 @@ namespace Raycasting
 
             game = new Game(app);
             menu = new Menu(app);
+
+            game.Draw();
+            background = new Texture(app.Size.X, app.Size.Y);
+            background.Update(app);
 
             var clock = new Clock();
 
@@ -150,6 +158,12 @@ namespace Raycasting
                     }
                     else
                     {
+                        var size = new Vector2f(app.Size.X, app.Size.Y);
+                        RectangleShape rs = new RectangleShape(size);
+                        rs.Position = new Vector2f(0, 0);
+                        rs.Texture = background;
+                        rs.TextureRect = new IntRect(0, 0, (int)background.Size.X, (int)background.Size.Y);
+                        app.Draw(rs);
                         menu.Draw();
                     }
 
@@ -170,6 +184,9 @@ namespace Raycasting
                         app.SetMouseCursorVisible(showMenu);
                         if (showMenu)
                         {
+                            background.Dispose();
+                            background = new Texture(app.Size.X, app.Size.Y);
+                            background.Update(app);
                             Vector2i center = new Vector2i((int)app.GetView().Center.X, (int)app.GetView().Center.Y);
                             Mouse.SetPosition(center, app);
                         }
