@@ -117,7 +117,7 @@ namespace Raycasting
 
             Button b_newGame = new Button(t_newGame, "NewGame", true);
             Button b_loadGame = new Button(t_loadGame, "LoadGame", false);
-            Button b_settings = new Button(t_settings, "Settings", true);
+            Button b_settings = new Button(t_settings, "Settings", false);
             Button b_quit = new Button(t_quit, "Quit", true);
 
             buttons.Add(b_newGame);
