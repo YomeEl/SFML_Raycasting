@@ -127,7 +127,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="icon.ico" />
     <None Include="Resources\ALGER.TTF" />
     <None Include="Resources\icon.ico" />
   </ItemGroup>
