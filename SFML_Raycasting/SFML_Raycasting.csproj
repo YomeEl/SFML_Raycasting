@@ -89,12 +89,14 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Enums.cs" />
-    <Compile Include="Game.cs" />
-    <Compile Include="GameObject.cs" />
-    <Compile Include="Graphics.cs" />
-    <Compile Include="Map.cs" />
-    <Compile Include="Player.cs" />
+    <Compile Include="Menu\Button.cs" />
+    <Compile Include="System\Enums.cs" />
+    <Compile Include="Game\Game.cs" />
+    <Compile Include="Game\GameObject.cs" />
+    <Compile Include="Engine\Graphics.cs" />
+    <Compile Include="Game\Map.cs" />
+    <Compile Include="Menu\Menu.cs" />
+    <Compile Include="Game\Player.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -102,12 +104,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Ray.cs" />
-    <Compile Include="Serializer.cs" />
+    <Compile Include="Engine\Ray.cs" />
+    <Compile Include="System\Serializer.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="Textures.cs" />
-    <Compile Include="Vector.cs" />
-    <Compile Include="Wall.cs" />
+    <Compile Include="Engine\Textures.cs" />
+    <Compile Include="System\Vector.cs" />
+    <Compile Include="Game\Wall.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -126,6 +128,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="icon.ico" />
+    <None Include="Resources\ALGER.TTF" />
     <None Include="Resources\icon.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -134,6 +137,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

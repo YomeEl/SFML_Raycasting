@@ -8,10 +8,13 @@ namespace Raycasting
     class Program
     {
         static Game game;
+        static Menu menu;
         static Direction[] dir = { Direction.None, Direction.None, Direction.None, Direction.None };
         static RenderWindow app;
         static bool fullscreen = false;
         static bool requestScreenModeChange = false;
+        static bool showMenu = true;
+        static bool requestMenuModeChange = false;
 
         static void OnClose(object sender, EventArgs e)
         {
@@ -44,7 +47,7 @@ namespace Raycasting
                     break;
 
                 case Keyboard.Key.Escape:
-                    app.Close();
+                    requestMenuModeChange = true;
                     break;    
             }
         }
@@ -71,15 +74,24 @@ namespace Raycasting
             }
         }
 
+        static void onMouseButtonPressed(object sender, MouseButtonEventArgs e)
+        {
+            switch (menu.MouseClick(e))
+            {
+                case MenuEvent.NewGame:
+                    requestMenuModeChange = true;
+                    break;
+            }
+        }
+
         static void CreateWindow()
         {
-            fullscreen = !fullscreen;
-
             if (app != null)
             {
                 app.Closed -= OnClose;
                 app.KeyPressed -= OnKeyDown;
                 app.KeyReleased -= OnKeyUp;
+                app.MouseButtonPressed -= onMouseButtonPressed;
 
                 app.Dispose();
                 app = null;
@@ -93,8 +105,8 @@ namespace Raycasting
             app.Closed += OnClose;
             app.KeyPressed += OnKeyDown;
             app.KeyReleased += OnKeyUp;
+            app.MouseButtonPressed += onMouseButtonPressed;
 
-            app.SetMouseCursorVisible(false);
             app.SetFramerateLimit(60);
             app.RequestFocus();
         }
@@ -106,6 +118,7 @@ namespace Raycasting
             CreateWindow();
 
             game = new Game(app);
+            menu = new Menu(app);
 
             var clock = new Clock();
 
@@ -116,30 +129,56 @@ namespace Raycasting
                 {
                     app.DispatchEvents();
 
-                    game.RotatePlayer((Mouse.GetPosition().X - mouseX) * (float)(Math.PI / 360));
-
-                    var center = app.GetView().Center;
-                    Mouse.SetPosition(new Vector2i((int)center.X + app.Position.Y, (int)center.Y + app.Position.X));
-                    mouseX = Mouse.GetPosition().X;
-
-                    foreach (Direction d in dir)
+                    if (!showMenu)
                     {
-                        if (d != Direction.None)
-                        {
-                            game.MovePlayer(d, clock.ElapsedTime.AsMilliseconds());
-                        }
-                    }
-                    clock.Restart();
+                        game.RotatePlayer((Mouse.GetPosition().X - mouseX) * (float)(Math.PI / 360));
 
-                    game.Draw();
+                        var center = app.GetView().Center;
+                        Mouse.SetPosition(new Vector2i((int)center.X, (int)center.Y), app);
+                        mouseX = Mouse.GetPosition().X;
+
+                        foreach (Direction d in dir)
+                        {
+                            if (d != Direction.None)
+                            {
+                                game.MovePlayer(d, clock.ElapsedTime.AsMilliseconds());
+                            }
+                        }
+                        clock.Restart();
+
+                        game.Draw();
+                    }
+                    else
+                    {
+                        menu.Draw();
+                    }
 
                     app.Display();
 
                     if (requestScreenModeChange)
                     {
+                        fullscreen = !fullscreen;
                         CreateWindow();
                         game.UpdateApp(app);
+                        menu.UpdateApp(app);
                         requestScreenModeChange = false;
+                    }
+
+                    if (requestMenuModeChange)
+                    {
+                        showMenu = !showMenu;
+                        app.SetMouseCursorVisible(showMenu);
+                        if (showMenu)
+                        {
+                            Vector2i center = new Vector2i((int)app.GetView().Center.X, (int)app.GetView().Center.Y);
+                            Mouse.SetPosition(center, app);
+                        }
+                        else
+                        {
+                            mouseX = Mouse.GetPosition().X;
+                            clock.Restart();
+                        }
+                        requestMenuModeChange = false;
                     }
                 }
             }

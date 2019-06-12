@@ -9,4 +9,9 @@
     {
         Forward, Right, Backward, Left, None
     }
+
+    enum MenuEvent
+    {
+        Idle, NewGame, Continue
+    }
 }

@@ -1,5 +1,5 @@
 ﻿using System;
-
+using SFML.Graphics;
 namespace Raycasting
 {
     static class Settings
@@ -8,6 +8,13 @@ namespace Raycasting
         {
             public static QualitySettings Quality = QualitySettings.High;
             public static uint WallHeight;
+        }
+
+        public static class Menu
+        {
+            public static Font MenuFont = new Font(Properties.Resources.ALGER);
+            public static Color SelectedColor = Color.Green;
+            public static Color NotSelectedColor = Color.Red;
         }
 
         public static class Player
