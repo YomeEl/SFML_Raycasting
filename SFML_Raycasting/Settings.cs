@@ -13,9 +13,12 @@ namespace Raycasting
 
         public static class Menu
         {
-            public static Font MenuFont = new Font(Properties.Resources.ALGER);
+            public static Font MenuFont = new Font(Properties.Resources.Volkhov_Regular);
+            public const uint FontSize = 64;
+            public const uint MenuGap = 10;
             public static Color SelectedColor = Color.Yellow;
             public static Color NotSelectedColor = Color.Red;
+            public static Color DisabledColor = new Color(150, 128, 128);
         }
 
         public static class Player

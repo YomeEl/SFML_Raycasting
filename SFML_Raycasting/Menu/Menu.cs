@@ -9,24 +9,46 @@ namespace Raycasting
     {
         RenderWindow app;
 
-        uint left;
-        uint top;
-        uint cellSize;
-        uint fontHeight;
-
         List<Button> buttons = new List<Button>();
+
+        Vector position = new Vector(0, 0);
+        Vector anchor = new Vector(0, 0);
+
+        public Vector Anchor
+        {
+            get
+            {
+                return anchor;
+            }
+            set
+            {
+                anchor = value;
+                UpdateButtons();
+            }
+        }
+
+        public Vector Position
+        {
+            get
+            {
+                return position;
+            }
+            set
+            {
+                position = value;
+                UpdateButtons();
+            }
+        }
 
         public Menu(RenderWindow app)
         {
             UpdateApp(app);
+            UpdateButtons();
         }
 
         public void UpdateApp(RenderWindow app)
         {
             this.app = app;
-
-            UpdateConstants();
-            UpdateButtons();
         }
 
         public MenuEvent MouseClick(MouseButtonEventArgs e)
@@ -64,56 +86,33 @@ namespace Raycasting
         bool isMouseHovering(Button b)
         {
             Vector2i mousePos = Mouse.GetPosition(app);
-            FloatRect bounds = b.Text.GetLocalBounds();
-            Vector2f position = b.Text.Position;
-            bounds.Height += fontHeight / 3;
-            position += new Vector2f(0, fontHeight / 8);
-            bool xCondition = mousePos.X >= position.X && mousePos.X < position.X + bounds.Width;
-            bool yCondition = mousePos.Y >= position.Y && mousePos.Y < position.Y + bounds.Height;
-            return xCondition && yCondition;
+            FloatRect bounds = new FloatRect(b.Text.Position.X, b.Text.Position.Y, b.Text.GetLocalBounds().Width, Settings.Menu.FontSize - 6);
+            bounds.Height += Settings.Menu.FontSize / 4;
+
+            return bounds.Contains(mousePos.X, mousePos.Y);
         }
 
         void setTextColor(Button b)
         {
-            if (b.Enabled)
-            {
-                b.Text.FillColor = isMouseHovering(b) ? Settings.Menu.SelectedColor : Settings.Menu.NotSelectedColor;
-            }
-            else
-            {
-                b.Text.FillColor = new Color(180, 128, 128);
-            }
+            b.Text.FillColor = b.Enabled ? isMouseHovering(b) ? Settings.Menu.SelectedColor : Settings.Menu.NotSelectedColor : Settings.Menu.DisabledColor;
         }
-
-        void UpdateConstants()
-        {
-            uint height = app.Size.Y;
-
-            top = 0;
-            uint bottom = height;
-
-            top += height / 10;
-            bottom -= height / 10;
-
-            cellSize = (bottom - top) / 4;
-            fontHeight = cellSize / 2;
-
-            left = top;
-        }
-
+        
         void UpdateButtons()
         {
             buttons.Clear();
+            Vector offset = position - anchor;
+            const uint fontHeight = Settings.Menu.FontSize;
+            const uint gap = Settings.Menu.MenuGap;
 
             Text t_newGame = new Text("Play", Settings.Menu.MenuFont, fontHeight);
             Text t_loadGame = new Text("Load game", Settings.Menu.MenuFont, fontHeight);
             Text t_settings = new Text("Settings", Settings.Menu.MenuFont, fontHeight);
             Text t_quit = new Text("Quit", Settings.Menu.MenuFont, fontHeight);
 
-            t_newGame.Position = new Vector2f(left, top);
-            t_loadGame.Position = new Vector2f(left, top + cellSize);
-            t_settings.Position = new Vector2f(left, top + 2 * cellSize);
-            t_quit.Position = new Vector2f(left, top + 3 * cellSize);
+            t_newGame.Position = new Vector2f(offset.X, offset.Y);
+            t_loadGame.Position = new Vector2f(offset.X, offset.Y + fontHeight + gap);
+            t_settings.Position = new Vector2f(offset.X, offset.Y + 2 * (fontHeight + gap));
+            t_quit.Position = new Vector2f(offset.X, offset.Y + 3 * (fontHeight + gap));
 
             Button b_newGame = new Button(t_newGame, "NewGame", true);
             Button b_loadGame = new Button(t_loadGame, "LoadGame", false);
@@ -130,6 +129,11 @@ namespace Raycasting
                 b.Text.OutlineThickness = 1;
                 b.Text.OutlineColor = Color.Black;
             }
+        }
+
+        public uint GetHeight()
+        {
+            return (Settings.Menu.FontSize + Settings.Menu.MenuGap) * (uint)buttons.Count - Settings.Menu.MenuGap;
         }
 
         public void Draw()

@@ -112,7 +112,6 @@ namespace Raycasting
 
             app.SetFramerateLimit(60);
             app.SetMouseCursorVisible(showMenu);
-            app.RequestFocus();
         }
 
         static void Main(string[] args)
@@ -123,10 +122,16 @@ namespace Raycasting
 
             game = new Game(app);
             menu = new Menu(app);
+            menu.Anchor = new Vector(0, menu.GetHeight());
+            menu.Position = new Vector(app.Size.X * 0.07f, app.Size.Y * 0.9f);
 
             game.Draw();
             background = new Texture(app.Size.X, app.Size.Y);
             background.Update(app);
+            RectangleShape bgRect = new RectangleShape(new Vector2f(app.Size.X, app.Size.Y));
+            bgRect.Position = new Vector2f(0, 0);
+            bgRect.TextureRect = new IntRect(0, 0, (int)background.Size.X, (int)background.Size.Y);
+            bgRect.Texture = background;
 
             var clock = new Clock();
 
@@ -158,12 +163,7 @@ namespace Raycasting
                     }
                     else
                     {
-                        var size = new Vector2f(app.Size.X, app.Size.Y);
-                        RectangleShape rs = new RectangleShape(size);
-                        rs.Position = new Vector2f(0, 0);
-                        rs.Texture = background;
-                        rs.TextureRect = new IntRect(0, 0, (int)background.Size.X, (int)background.Size.Y);
-                        app.Draw(rs);
+                        app.Draw(bgRect);
                         menu.Draw();
                     }
 
@@ -175,9 +175,12 @@ namespace Raycasting
                         CreateWindow();
                         game.UpdateApp(app);
                         menu.UpdateApp(app);
+                        menu.Anchor = new Vector(0, menu.GetHeight());
+                        menu.Position = new Vector(app.Size.X * 0.1f, app.Size.Y * 0.9f);
+                        bgRect.Size = new Vector2f(app.Size.X, app.Size.Y);
                         requestScreenModeChange = false;
                     }
-
+                    
                     if (requestMenuModeChange)
                     {
                         showMenu = !showMenu;
@@ -187,6 +190,8 @@ namespace Raycasting
                             background.Dispose();
                             background = new Texture(app.Size.X, app.Size.Y);
                             background.Update(app);
+                            bgRect.Texture = background;
+                            bgRect.TextureRect = new IntRect(0, 0, (int)background.Size.X, (int)background.Size.Y);
                             Vector2i center = new Vector2i((int)app.GetView().Center.X, (int)app.GetView().Center.Y);
                             Mouse.SetPosition(center, app);
                         }
