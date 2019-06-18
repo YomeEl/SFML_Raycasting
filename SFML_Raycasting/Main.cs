@@ -138,10 +138,10 @@ namespace Raycasting
             int mouseX = Mouse.GetPosition().X;
             while (app.IsOpen)
             {
+                app.DispatchEvents();
+
                 if (app.HasFocus())
                 {
-                    app.DispatchEvents();
-
                     if (!showMenu)
                     {
                         game.RotatePlayer((Mouse.GetPosition().X - mouseX) * (float)(Math.PI / 360));
