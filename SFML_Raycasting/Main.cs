@@ -57,8 +57,9 @@ namespace Raycasting
                     else
                     {
                         menu.ReturnToMainPage();
+                        RecalculateMenuAnchor();
                     }
-                    break;    
+                    break;
             }
         }
 
@@ -93,11 +94,11 @@ namespace Raycasting
                     break;
 
                 case MenuEvent.ShowMain:
-                    menu.Anchor = new Vector(0, menu.GetCurrentPageHeight());
+                    RecalculateMenuAnchor();
                     break;
 
                 case MenuEvent.ShowSettings:
-                    menu.Anchor = new Vector(0, menu.GetCurrentPageHeight());
+                    RecalculateMenuAnchor();
                     break;
 
                 case MenuEvent.Quit:
@@ -133,6 +134,11 @@ namespace Raycasting
             win.SetMouseCursorVisible(showMenu);
         }
 
+        static void RecalculateMenuAnchor()
+        {
+            menu.Anchor = new Vector(0, menu.GetCurrentPageHeight());
+        }
+
         static void Main(string[] args)
         {
             Textures.Load();
@@ -141,7 +147,7 @@ namespace Raycasting
 
             game = new Game(win);
             menu = new Menu(win);
-            menu.Anchor = new Vector(0, menu.GetCurrentPageHeight());
+            RecalculateMenuAnchor();
             menu.Position = new Vector(win.Size.X * 0.07f, win.Size.Y * 0.9f);
 
             game.Draw();
