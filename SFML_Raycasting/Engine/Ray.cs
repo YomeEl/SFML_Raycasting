@@ -3,51 +3,23 @@
     class Ray
     {
         Vector pos;
-        Vector dir;
 
-        private int x;
-
-        public Vector Direction
-        {
-            get
-            {
-                return dir;
-            }
-        }
-
-        public int X
-        {
-            get
-            {
-                return x;
-            }
-
-            set
-            {
-                x = value;
-            }
-        }
+        public Vector Direction { get; }
 
         public Ray(Vector pos, Vector dir)
         {
             this.pos = pos;
-            this.dir = dir;
+            this.Direction = dir;
 
-            this.dir.MakeUnit();
+            this.Direction.MakeUnit();
         }
 
-        public Ray(float x1, float y1, float x2, float y2)
-        {
-            pos = new Vector(x1, y1);
-            dir = new Vector(x2, y2);
-        }
-
-        public Vector CastToWall(Wall wall, out float _u)
+        public (Vector intersection, float u) CastToWall(Wall wall)
         {
             float x1 = pos.X;
             float y1 = pos.Y;
-            float x2 = pos.X + dir.X * 1000;
-            float y2 = pos.Y + dir.Y * 1000;
+            float x2 = pos.X + Direction.X * 1000;
+            float y2 = pos.Y + Direction.Y * 1000;
 
             float x3 = wall.A.X;
             float y3 = wall.A.Y;
@@ -58,8 +30,7 @@
 
             if (den == 0)
             {
-                _u = 0;
-                return null;
+                return (null, 0);
             }
 
             float t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / den;
@@ -67,13 +38,11 @@
 
             if (u >= 0 && u <= 1 && t >= 0)
             {
-                _u = u;
-                return new Vector(x1 + t * (x2 - x1), y1 + t * (y2 - y1));
+                return (new Vector(x1 + t * (x2 - x1), y1 + t * (y2 - y1)), u);
             }
             else
             {
-                _u = 0;
-                return null;
+                return (null, 0);
             }
         }
     }

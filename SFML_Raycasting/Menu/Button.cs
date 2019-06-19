@@ -1,44 +1,20 @@
 ﻿using SFML.Graphics;
 
-class Button
+namespace Raycasting
 {
-    Text text;
-    string name;
-    bool enabled;
-
-    public Text Text
+    class Button
     {
-        get
-        {
-            return text;
-        }
-    }
+        public Text Text { get; }
 
-    public string Name
-    {
-        get
-        {
-            return name;
-        }
-    }
+        public string Name { get; }
 
-    public bool Enabled
-    {
-        get
-        {
-            return enabled;
-        }
+        public bool Enabled { get; set; }
 
-        set
+        public Button(Text text, string name, bool enabled)
         {
-            enabled = value;
+            this.Text = text;
+            this.Name = name;
+            this.Enabled = enabled;
         }
-    }
-
-    public Button(Text text, string name, bool enabled)
-    {
-        this.text = text;
-        this.name = name;
-        this.enabled = enabled;
     }
 }

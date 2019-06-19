@@ -5,60 +5,28 @@ namespace Raycasting
     [Serializable]
     class Player
     {
-        private Vector position;
-        private Vector rotation;
         private float speed = Settings.Player.InitialSpeed;
 
-        public Vector Position
-        {
-            get
-            {
-                return position;
-            }
+        public Vector Position { get; set; }
 
-            set
-            {
-                position = value;
-            }
-        }
-
-        public Vector Rotation
-        {
-            get
-            {
-                return rotation;
-            }
-        }
-
-        public float Speed
-        {
-            get
-            {
-                return speed;
-            }
-
-            set
-            {
-                speed = value;
-            }
-        }
+        public Vector Rotation { get; private set; }
 
         public Player(Vector position)
         {
-            this.position = position;
-            this.rotation = new Vector(1, 0);
+            this.Position = position;
+            Rotation = new Vector(1, 0);
         }
 
         public Player(Vector position, Vector rotation)
         {
-            this.position = position;
-            this.rotation = rotation;
+            this.Position = position;
+            this.Rotation = rotation;
         }
 
         public void LookAt(Vector coord)
         {
-            rotation = coord - position;
-            rotation.MakeUnit();
+            Rotation = coord - Position;
+            Rotation.MakeUnit();
         }
 
         public void LookAt(float x, float y)
@@ -66,34 +34,28 @@ namespace Raycasting
             LookAt(new Vector(x, y));
         }
 
-        public void MoveTo(float x, float y)
-        {
-            position.X = x;
-            position.Y = y;
-        }
-
         public void Move(Direction dir, int dist)
         {
             switch (dir)
             {
                 case Direction.Forward:
-                    position += rotation * speed * dist;
+                    Position += Rotation * speed * dist;
                     break;
 
                 case Direction.Right:
-                    Vector left_rot = new Vector(rotation);
+                    Vector left_rot = new Vector(Rotation);
                     left_rot.Rotate((float)Math.PI / 2);
-                    position += left_rot * speed * dist;
+                    Position += left_rot * speed * dist;
                     break;
 
                 case Direction.Backward:
-                    position -= rotation * speed * dist;
+                    Position -= Rotation * speed * dist;
                     break;
 
                 case Direction.Left:
-                    Vector right_rot = new Vector(rotation);
+                    Vector right_rot = new Vector(Rotation);
                     right_rot.Rotate(-(float)Math.PI / 2);
-                    position += right_rot * speed * dist;
+                    Position += right_rot * speed * dist;
                     break;
             }
         }

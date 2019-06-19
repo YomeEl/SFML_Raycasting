@@ -12,6 +12,11 @@
 
     enum MenuEvent
     {
-        Idle, NewGame, Continue
+        Idle, NewGame, Continue, ShowSettings, ShowMain, Quit
+    }
+
+    enum MenuPages
+    {
+        Main, Settings
     }
 }

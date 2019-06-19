@@ -10,7 +10,7 @@ namespace Raycasting
         static Game game;
         static Menu menu;
         static Direction[] dir = { Direction.None, Direction.None, Direction.None, Direction.None };
-        static RenderWindow app;
+        static RenderWindow win;
 
         static Texture background;
 
@@ -50,7 +50,14 @@ namespace Raycasting
                     break;
 
                 case Keyboard.Key.Escape:
-                    requestMenuModeChange = true;
+                    if (menu.CurrentPage == MenuPages.Main)
+                    {
+                        requestMenuModeChange = true;
+                    }
+                    else
+                    {
+                        menu.ReturnToMainPage();
+                    }
                     break;    
             }
         }
@@ -77,41 +84,53 @@ namespace Raycasting
             }
         }
 
-        static void onMouseButtonPressed(object sender, MouseButtonEventArgs e)
+        static void OnMouseButtonPressed(object sender, MouseButtonEventArgs e)
         {
-            switch (menu.MouseClick(e))
+            switch (menu.OnMouseClick(e))
             {
                 case MenuEvent.NewGame:
                     requestMenuModeChange = true;
+                    break;
+
+                case MenuEvent.ShowMain:
+                    menu.Anchor = new Vector(0, menu.GetCurrentPageHeight());
+                    break;
+
+                case MenuEvent.ShowSettings:
+                    menu.Anchor = new Vector(0, menu.GetCurrentPageHeight());
+                    break;
+
+                case MenuEvent.Quit:
+                    win.Close();
                     break;
             }
         }
 
         static void CreateWindow()
         {
-            if (app != null)
+            if (win != null)
             {
-                app.Closed -= OnClose;
-                app.KeyPressed -= OnKeyDown;
-                app.KeyReleased -= OnKeyUp;
-                app.MouseButtonPressed -= onMouseButtonPressed;
+                win.Closed -= OnClose;
+                win.KeyPressed -= OnKeyDown;
+                win.KeyReleased -= OnKeyUp;
+                win.MouseButtonPressed -= OnMouseButtonPressed;
 
-                app.Dispose();
-                app = null;
+                win.Dispose();
+                win = null;
             }
 
             VideoMode vm = new VideoMode(VideoMode.DesktopMode.Width, VideoMode.DesktopMode.Height);
-            app = new RenderWindow(fullscreen ? vm : new VideoMode(800, 600), "Raycating game", Styles.None);
+            win = new RenderWindow(fullscreen ? vm : new VideoMode(800, 600), "Raycating game", Styles.None);
 
-            Settings.Drawing.WallHeight = app.Size.Y;
+            Settings.Drawing.WallHeight = win.Size.Y;
 
-            app.Closed += OnClose;
-            app.KeyPressed += OnKeyDown;
-            app.KeyReleased += OnKeyUp;
-            app.MouseButtonPressed += onMouseButtonPressed;
+            win.Closed += OnClose;
+            win.KeyPressed += OnKeyDown;
+            win.KeyReleased += OnKeyUp;
+            win.MouseButtonPressed += OnMouseButtonPressed;
 
-            app.SetFramerateLimit(60);
-            app.SetMouseCursorVisible(showMenu);
+            win.SetFramerateLimit(60);
+            win.SetMouseCursorVisible(showMenu);
         }
 
         static void Main(string[] args)
@@ -120,34 +139,36 @@ namespace Raycasting
 
             CreateWindow();
 
-            game = new Game(app);
-            menu = new Menu(app);
-            menu.Anchor = new Vector(0, menu.GetHeight());
-            menu.Position = new Vector(app.Size.X * 0.07f, app.Size.Y * 0.9f);
+            game = new Game(win);
+            menu = new Menu(win);
+            menu.Anchor = new Vector(0, menu.GetCurrentPageHeight());
+            menu.Position = new Vector(win.Size.X * 0.07f, win.Size.Y * 0.9f);
 
             game.Draw();
-            background = new Texture(app.Size.X, app.Size.Y);
-            background.Update(app);
-            RectangleShape bgRect = new RectangleShape(new Vector2f(app.Size.X, app.Size.Y));
-            bgRect.Position = new Vector2f(0, 0);
-            bgRect.TextureRect = new IntRect(0, 0, (int)background.Size.X, (int)background.Size.Y);
-            bgRect.Texture = background;
+            background = new Texture(win.Size.X, win.Size.Y);
+            background.Update(win);
+            RectangleShape bgRect = new RectangleShape(new Vector2f(win.Size.X, win.Size.Y))
+            {
+                Position = new Vector2f(0, 0),
+                TextureRect = new IntRect(0, 0, (int)background.Size.X, (int)background.Size.Y),
+                Texture = background
+            };
 
             var clock = new Clock();
 
             int mouseX = Mouse.GetPosition().X;
-            while (app.IsOpen)
+            while (win.IsOpen)
             {
-                app.DispatchEvents();
+                win.DispatchEvents();
 
-                if (app.HasFocus())
+                if (win.HasFocus())
                 {
                     if (!showMenu)
                     {
                         game.RotatePlayer((Mouse.GetPosition().X - mouseX) * (float)(Math.PI / 360));
 
-                        var center = app.GetView().Center;
-                        Mouse.SetPosition(new Vector2i((int)center.X, (int)center.Y), app);
+                        var center = win.GetView().Center;
+                        Mouse.SetPosition(new Vector2i((int)center.X, (int)center.Y), win);
                         mouseX = Mouse.GetPosition().X;
 
                         foreach (Direction d in dir)
@@ -163,37 +184,36 @@ namespace Raycasting
                     }
                     else
                     {
-                        app.Draw(bgRect);
+                        win.Draw(bgRect);
                         menu.Draw();
                     }
 
-                    app.Display();
+                    win.Display();
 
                     if (requestScreenModeChange)
                     {
                         fullscreen = !fullscreen;
                         CreateWindow();
-                        game.UpdateApp(app);
-                        menu.UpdateApp(app);
-                        menu.Anchor = new Vector(0, menu.GetHeight());
-                        menu.Position = new Vector(app.Size.X * 0.1f, app.Size.Y * 0.9f);
-                        bgRect.Size = new Vector2f(app.Size.X, app.Size.Y);
+                        game.UpdateWindow(win);
+                        menu.UpdateWindow(win);
+                        menu.Position = new Vector(win.Size.X * 0.1f, win.Size.Y * 0.9f);
+                        bgRect.Size = new Vector2f(win.Size.X, win.Size.Y);
                         requestScreenModeChange = false;
                     }
                     
                     if (requestMenuModeChange)
                     {
                         showMenu = !showMenu;
-                        app.SetMouseCursorVisible(showMenu);
+                        win.SetMouseCursorVisible(showMenu);
                         if (showMenu)
                         {
                             background.Dispose();
-                            background = new Texture(app.Size.X, app.Size.Y);
-                            background.Update(app);
+                            background = new Texture(win.Size.X, win.Size.Y);
+                            background.Update(win);
                             bgRect.Texture = background;
                             bgRect.TextureRect = new IntRect(0, 0, (int)background.Size.X, (int)background.Size.Y);
-                            Vector2i center = new Vector2i((int)app.GetView().Center.X, (int)app.GetView().Center.Y);
-                            Mouse.SetPosition(center, app);
+                            Vector2i center = new Vector2i((int)win.GetView().Center.X, (int)win.GetView().Center.Y);
+                            Mouse.SetPosition(center, win);
                         }
                         else
                         {
