@@ -91,6 +91,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Game\GameObjects\Enemy.cs" />
     <Compile Include="Menu\Button.cs" />
     <Compile Include="Menu\MenuPage.cs" />
     <Compile Include="Menu\Pages\MainPage.cs" />
@@ -114,7 +115,7 @@
     <Compile Include="Settings.cs" />
     <Compile Include="Engine\Textures.cs" />
     <Compile Include="System\Vector.cs" />
-    <Compile Include="Game\Wall.cs" />
+    <Compile Include="Game\GameObjects\Wall.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

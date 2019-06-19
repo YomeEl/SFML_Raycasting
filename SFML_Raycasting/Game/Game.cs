@@ -17,9 +17,21 @@
 
         public Game(SFML.Graphics.RenderWindow win)
         {
-            map = new Map();
-            map.InitializeTestMap();
-            Serializer.Serialize(map, "Maps/map1.dat");
+            Serializer.Deserialize(out map, "Maps/map1.dat");
+
+            foreach (GameObject obj in map.Objects)
+            {
+                switch (obj)
+                {
+                    case Wall w:
+                        w.Texture = Textures.WallTexture;
+                        break;
+
+                    case Enemy e:
+                        e.Texture = Textures.EnemyTexture;
+                        break;
+                }
+            }
 
             player = new Player(map.StartPosition);
             graphics = new Graphics(win);
@@ -27,6 +39,27 @@
             MovePlayer = player.Move;
             RotatePlayer = player.Rotation.Rotate;
             UpdateWindow = graphics.UpdateWindow;
+        }
+
+        public void Shoot()
+        {
+            var bullet = new Ray(player.Position, player.Rotation);
+            GameObject hit = null;
+            foreach (GameObject go in map.Objects)
+            {
+                if (!(go is Wall))
+                {
+                    var intersectionInfo = bullet.CastTo(go);
+                    if (intersectionInfo.intersection != null)
+                    {
+                        hit = go;
+                    }
+                }
+            }
+            if (hit != null)
+            {
+                map.Objects.Remove(hit);
+            }
         }
 
         public void Draw()

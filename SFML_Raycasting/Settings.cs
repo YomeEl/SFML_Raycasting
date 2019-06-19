@@ -9,6 +9,7 @@ namespace Raycasting
         {
             public static QualitySettings Quality = QualitySettings.High;
             public static uint WallHeight;
+            public const float EnemyWidth = 0.5f;
         }
 
         public static class Menu

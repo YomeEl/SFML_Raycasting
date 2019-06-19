@@ -97,5 +97,10 @@ namespace Raycasting
         {
             return (b - a).GetLength();
         }
+
+        public static Vector GetPerpendicular(Vector a)
+        {
+            return new Vector(-a.Y, a.X);
+        }
     }
 }

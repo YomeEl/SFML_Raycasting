@@ -87,23 +87,30 @@ namespace Raycasting
 
         static void OnMouseButtonPressed(object sender, MouseButtonEventArgs e)
         {
-            switch (menu.OnMouseClick(e))
+            if (showMenu)
             {
-                case MenuEvent.NewGame:
-                    requestMenuModeChange = true;
-                    break;
+                switch (menu.OnMouseClick(e))
+                {
+                    case MenuEvent.NewGame:
+                        requestMenuModeChange = true;
+                        break;
 
-                case MenuEvent.ShowMain:
-                    RecalculateMenuAnchor();
-                    break;
+                    case MenuEvent.ShowMain:
+                        RecalculateMenuAnchor();
+                        break;
 
-                case MenuEvent.ShowSettings:
-                    RecalculateMenuAnchor();
-                    break;
+                    case MenuEvent.ShowSettings:
+                        RecalculateMenuAnchor();
+                        break;
 
-                case MenuEvent.Quit:
-                    win.Close();
-                    break;
+                    case MenuEvent.Quit:
+                        win.Close();
+                        break;
+                }
+            }
+            else
+            {
+                game.Shoot();
             }
         }
 

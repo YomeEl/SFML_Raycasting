@@ -14,17 +14,18 @@
             this.Direction.MakeUnit();
         }
 
-        public (Vector intersection, float u) CastToWall(Wall wall)
+        public (Vector intersection, float u) CastTo(GameObject target)
         {
             float x1 = pos.X;
             float y1 = pos.Y;
             float x2 = pos.X + Direction.X * 1000;
             float y2 = pos.Y + Direction.Y * 1000;
 
-            float x3 = wall.A.X;
-            float y3 = wall.A.Y;
-            float x4 = wall.B.X;
-            float y4 = wall.B.Y;
+            var (A, B) = target.GetLine(pos);
+            float x3 = A.X;
+            float y3 = A.Y;
+            float x4 = B.X;
+            float y4 = B.Y;
 
             float den = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
 

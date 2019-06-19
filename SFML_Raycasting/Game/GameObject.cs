@@ -1,8 +1,16 @@
 ﻿using SFML.Graphics;
+using System;
 
 namespace Raycasting
 {
-    interface GameObject
+    [Serializable]
+    abstract class GameObject
     {
+        [NonSerialized]
+        Texture texture;
+
+        public Texture Texture { get => texture; set => texture = value; }
+
+        public abstract (Vector A, Vector B) GetLine(Vector observedFrom);
     }
 }

@@ -29,6 +29,9 @@ namespace Raycasting
                 Objects.Add(new Wall(0, size, 0, 0));
             }
 
+            Objects.Add(new Enemy(new Vector(5, 5)));
+            Objects.Add(new Enemy(new Vector(-5, -5)));
+
             StartPosition = new Vector(0.5f, 0.5f);
         }
     }

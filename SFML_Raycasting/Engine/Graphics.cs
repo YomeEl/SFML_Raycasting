@@ -1,6 +1,6 @@
 ﻿using SFML.Graphics;
 using SFML.System;
-using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace Raycasting
 {
@@ -58,40 +58,63 @@ namespace Raycasting
                 FillColor = new Color(100, 100, 100),
                 Position = new Vector2f(0f, height / 2)
             };
-
             win.Draw(floor);
             win.Draw(sky);
 
             CreateRays((int)width, player);
 
             RectangleShape rect = new RectangleShape(new Vector2f((int)Settings.Drawing.Quality, 0));
-            rect.Texture = Textures.WallTexture;
-
             for (int i = 0; i < rays.Length; i++)
             {
+                var nonWallIntersections = new List<(Vector intersection, float u, GameObject gameObject)>();
                 (Vector intersection, float u) closestIntersectionInfo = (null, 0);
-                Wall closestWall = null;
-                float dist_to_closest = float.MaxValue;
-                foreach (Wall w in objects)
+                GameObject closestObject = null;
+                float distToClosestWall = float.MaxValue;
+                foreach (GameObject obj in objects)
                 {
-                    var intersection_info = rays[i].CastToWall(w);
-                    if (intersection_info.intersection != null && 
-                        (closestIntersectionInfo.intersection == null || 
-                        Vector.Distance(player.Position, intersection_info.intersection) < dist_to_closest))
+                    var intersectionInfo = rays[i].CastTo(obj);
+                    if (intersectionInfo.intersection != null)
                     {
-                        closestIntersectionInfo = intersection_info;
-                        closestWall = w;
-                        dist_to_closest = Vector.Distance(player.Position, closestIntersectionInfo.intersection);
+                        if (obj is Wall)
+                        {
+                            if (closestIntersectionInfo.intersection == null ||
+                                Vector.Distance(player.Position, intersectionInfo.intersection) < distToClosestWall)
+                            {
+                                closestIntersectionInfo = intersectionInfo;
+                                closestObject = obj;
+                                distToClosestWall = Vector.Distance(player.Position, closestIntersectionInfo.intersection);
+                            }
+                        }
+                        else
+                        {
+                            nonWallIntersections.Add((intersectionInfo.intersection, intersectionInfo.u, obj));
+                        }
                     }
                 }
+
+                var doNotDraw = new List<(Vector intersection, float u, GameObject gameObject)>();
+                foreach (var intersectionInfo in nonWallIntersections)
+                {
+                    if (closestIntersectionInfo.intersection != null &&
+                        Vector.Distance(player.Position, intersectionInfo.intersection) > Vector.Distance(player.Position, closestIntersectionInfo.intersection))
+                    {
+                        doNotDraw.Add(intersectionInfo);
+                    }
+                }
+                foreach (var elem in doNotDraw)
+                {
+                    nonWallIntersections.Remove(elem);
+                }
+
                 if (closestIntersectionInfo.intersection != null)
                 {
                     float dist = Vector.Distance(player.Position, closestIntersectionInfo.intersection);
                     dist *= Vector.Cos(rays[i].Direction, player.Rotation);
 
-                    int left = (int)(Textures.WallTexture.Size.X * closestIntersectionInfo.u);
+                    rect.Texture = closestObject.Texture;
+                    int left = (int)(rect.Texture.Size.X * closestIntersectionInfo.u);
                     int w = (int)rect.Size.X;
-                    int h = (int)Textures.WallTexture.Size.Y;
+                    int h = (int)rect.Texture.Size.Y;
                     rect.TextureRect = new IntRect(left, 0, w, h);
 
                     float wallHeight = Settings.Drawing.WallHeight / dist;
@@ -101,7 +124,41 @@ namespace Raycasting
 
                     win.Draw(rect);
                 }
+
+                foreach (var (intersection, u, gameObject) in nonWallIntersections)
+                {
+                    if (intersection != null)
+                    {
+                        float dist = Vector.Distance(player.Position, intersection);
+                        //dist *= Vector.Cos(rays[i].Direction, player.Rotation);
+
+                        rect.Texture = gameObject.Texture;
+                        int left = (int)(rect.Texture.Size.X * u);
+                        int w = (int)rect.Size.X;
+                        int h = (int)rect.Texture.Size.Y;
+                        rect.TextureRect = new IntRect(left, 0, w, h);
+
+                        float wallHeight = Settings.Drawing.WallHeight / dist;
+                        float center = win.Size.Y / 2;
+                        rect.Position = new Vector2f(i * (int)Settings.Drawing.Quality, center - wallHeight / 2);
+                        rect.Size = new Vector2f(rect.Size.X, wallHeight);
+
+                        win.Draw(rect);
+                    }
+                }
             }
+
+            var gun = new RectangleShape(new Vector2f(win.Size.X, win.Size.Y));
+            gun.Texture = Textures.Gun;
+            win.Draw(gun);
+
+            var cross = new Vertex[4];
+            var wincenter = win.GetView().Center;
+            cross[0] = new Vertex(wincenter - new Vector2f(10, 0), Color.Red);
+            cross[1] = new Vertex(wincenter - new Vector2f(-10, 0), Color.Red);
+            cross[2] = new Vertex(wincenter - new Vector2f(0, 10), Color.Red);
+            cross[3] = new Vertex(wincenter - new Vector2f(0, -10), Color.Red);
+            win.Draw(cross, PrimitiveType.Lines);
         }
     }
 }
