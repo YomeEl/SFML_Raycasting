@@ -89,28 +89,27 @@ namespace Raycasting
         {
             if (showMenu)
             {
-                switch (menu.OnMouseClick(e))
+                switch (menu.ProcessMouseButtonClick(e))
                 {
                     case MenuEvent.NewGame:
                         requestMenuModeChange = true;
                         break;
 
-                    case MenuEvent.ShowMain:
-                        RecalculateMenuAnchor();
-                        break;
-
-                    case MenuEvent.ShowSettings:
-                        RecalculateMenuAnchor();
+                    case MenuEvent.Idle:
                         break;
 
                     case MenuEvent.Quit:
                         win.Close();
                         break;
+
+                    default:
+                        RecalculateMenuAnchor();
+                        break;
                 }
             }
             else
             {
-                game.Shoot();
+                if (e.Button == Mouse.Button.Left) game.Shoot();
             }
         }
 
@@ -146,12 +145,11 @@ namespace Raycasting
             menu.Anchor = new Vector(0, menu.GetCurrentPageHeight());
         }
 
-        static void Main(string[] args)
+        static void Main()
         {
             Textures.Load();
 
             CreateWindow();
-
             game = new Game(win);
             menu = new Menu(win);
             RecalculateMenuAnchor();
@@ -191,6 +189,7 @@ namespace Raycasting
                                 game.MovePlayer(d, clock.ElapsedTime.AsMilliseconds());
                             }
                         }
+
                         clock.Restart();
 
                         game.Draw();

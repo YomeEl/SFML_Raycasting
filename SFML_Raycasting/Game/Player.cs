@@ -26,7 +26,6 @@ namespace Raycasting
         public void LookAt(Vector coord)
         {
             Rotation = coord - Position;
-            Rotation.MakeUnit();
         }
 
         public void LookAt(float x, float y)

@@ -21,9 +21,10 @@ namespace Raycasting
         {
             Pages[MenuPages.Main] = new MainPage(win);
             Pages[MenuPages.Settings] = new SettingsPage(win);
+            Pages[MenuPages.Editor] = new EditorPage(win);
         }
 
-        public MenuEvent OnMouseClick(MouseButtonEventArgs e)
+        public MenuEvent ProcessMouseButtonClick(MouseButtonEventArgs e)
         {
             MenuEvent menuEvent = Pages[CurrentPage].OnMouseClick(e);
             switch (menuEvent)
@@ -35,6 +36,10 @@ namespace Raycasting
                 case MenuEvent.ShowMain:
                     CurrentPage = MenuPages.Main;
                     return MenuEvent.ShowMain;
+
+                case MenuEvent.ShowEditor:
+                    CurrentPage = MenuPages.Editor;
+                    return MenuEvent.ShowEditor;                    
 
                 default:
                     return menuEvent;

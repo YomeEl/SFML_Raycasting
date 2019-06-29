@@ -16,7 +16,6 @@ namespace Raycasting
 
         private void CreateRays(int width, Player player)
         {
-            
             Vector dir = new Vector(player.Rotation);
             dir.Rotate(-Settings.Player.FOV / 2);
 
@@ -31,10 +30,6 @@ namespace Raycasting
                 var r = new Ray(player.Position, new Vector(dir));
                 rays[i] = r;
                 dir.Rotate(Settings.Player.FOV / width);
-                if (i % 10 == 0)
-                {
-                    dir.MakeUnit();
-                }
             }
         }
 
@@ -67,7 +62,7 @@ namespace Raycasting
             for (int i = 0; i < rays.Length; i++)
             {
                 var nonWallIntersections = new List<(Vector intersection, float u, GameObject gameObject)>();
-                (Vector intersection, float u) closestIntersectionInfo = (null, 0);
+                (Vector intersection, float u) closestWallInfo = (null, 0);
                 GameObject closestObject = null;
                 float distToClosestWall = float.MaxValue;
                 foreach (GameObject obj in objects)
@@ -77,12 +72,12 @@ namespace Raycasting
                     {
                         if (obj is Wall)
                         {
-                            if (closestIntersectionInfo.intersection == null ||
+                            if (closestWallInfo.intersection == null ||
                                 Vector.Distance(player.Position, intersectionInfo.intersection) < distToClosestWall)
                             {
-                                closestIntersectionInfo = intersectionInfo;
+                                closestWallInfo = intersectionInfo;
                                 closestObject = obj;
-                                distToClosestWall = Vector.Distance(player.Position, closestIntersectionInfo.intersection);
+                                distToClosestWall = Vector.Distance(player.Position, closestWallInfo.intersection);
                             }
                         }
                         else
@@ -95,8 +90,8 @@ namespace Raycasting
                 var doNotDraw = new List<(Vector intersection, float u, GameObject gameObject)>();
                 foreach (var intersectionInfo in nonWallIntersections)
                 {
-                    if (closestIntersectionInfo.intersection != null &&
-                        Vector.Distance(player.Position, intersectionInfo.intersection) > Vector.Distance(player.Position, closestIntersectionInfo.intersection))
+                    if (closestWallInfo.intersection != null &&
+                        Vector.Distance(player.Position, intersectionInfo.intersection) > Vector.Distance(player.Position, closestWallInfo.intersection))
                     {
                         doNotDraw.Add(intersectionInfo);
                     }
@@ -106,13 +101,13 @@ namespace Raycasting
                     nonWallIntersections.Remove(elem);
                 }
 
-                if (closestIntersectionInfo.intersection != null)
+                if (closestWallInfo.intersection != null)
                 {
-                    float dist = Vector.Distance(player.Position, closestIntersectionInfo.intersection);
+                    float dist = Vector.Distance(player.Position, closestWallInfo.intersection);
                     dist *= Vector.Cos(rays[i].Direction, player.Rotation);
 
                     rect.Texture = closestObject.Texture;
-                    int left = (int)(rect.Texture.Size.X * closestIntersectionInfo.u);
+                    int left = (int)(rect.Texture.Size.X * closestWallInfo.u);
                     int w = (int)rect.Size.X;
                     int h = (int)rect.Texture.Size.Y;
                     rect.TextureRect = new IntRect(left, 0, w, h);
@@ -130,7 +125,6 @@ namespace Raycasting
                     if (intersection != null)
                     {
                         float dist = Vector.Distance(player.Position, intersection);
-                        //dist *= Vector.Cos(rays[i].Direction, player.Rotation);
 
                         rect.Texture = gameObject.Texture;
                         int left = (int)(rect.Texture.Size.X * u);

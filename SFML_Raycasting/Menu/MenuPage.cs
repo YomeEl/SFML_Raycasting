@@ -82,7 +82,7 @@ namespace Raycasting
         {
             Vector offset = position - anchor;
             const uint fontHeight = Settings.Menu.FontSize;
-            const uint gap = Settings.Menu.MenuGap;
+            const uint gap = Settings.Menu.Gap;
 
             for (int i = 0; i < buttons.Length; i++)
             {
@@ -92,7 +92,7 @@ namespace Raycasting
 
         public uint GetHeight()
         {
-            return (Settings.Menu.FontSize + Settings.Menu.MenuGap) * (uint)buttons.Length - Settings.Menu.MenuGap;
+            return (Settings.Menu.FontSize + Settings.Menu.Gap) * (uint)buttons.Length - Settings.Menu.Gap;
         }
 
         public void Draw()

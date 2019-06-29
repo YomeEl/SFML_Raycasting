@@ -12,11 +12,11 @@
 
     enum MenuEvent
     {
-        Idle, NewGame, Continue, ShowSettings, ShowMain, Quit
+        Idle, NewGame, Continue, ShowSettings, ShowMain, ShowEditor, Editor_NewMap, Editor_LoadMap, Quit
     }
 
     enum MenuPages
     {
-        Main, Settings
+        Main, Settings, Editor
     }
 }

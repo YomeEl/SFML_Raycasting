@@ -3,9 +3,9 @@ using SFML.Graphics;
 
 namespace Raycasting
 {
-    class SettingsPage : MenuPage
+    class EditorPage : MenuPage
     {
-        public SettingsPage(RenderWindow win) : base(win) { }
+        public EditorPage(RenderWindow win) : base(win) { }
 
         public override MenuEvent OnMouseClick(MouseButtonEventArgs e)
         {
@@ -15,6 +15,12 @@ namespace Raycasting
             {
                 switch (selected.Name)
                 {
+                    case "New":
+                        return MenuEvent.Editor_NewMap;
+
+                    case "Load":
+                        return MenuEvent.Editor_LoadMap;
+
                     case "Back":
                         return MenuEvent.ShowMain;
                 }
@@ -24,18 +30,21 @@ namespace Raycasting
 
         protected override void CreateButtons()
         {
-            Text t_message = new Text("Comming soon!", Settings.Menu.Font, Settings.Menu.FontSize);
+            Text t_new = new Text("Create new map", Settings.Menu.Font, Settings.Menu.FontSize);
+            Text t_load = new Text("Load map", Settings.Menu.Font, Settings.Menu.FontSize);
             Text t_back = new Text("Back", Settings.Menu.Font, Settings.Menu.FontSize);
 
-            Button b_message = new Button(t_message, "Comming soon!", false);
+            Button b_new = new Button(t_new, "New", true);
+            Button b_load = new Button(t_load, "Load", true);
             Button b_back = new Button(t_back, "Back", true);
 
-            buttons = new Button[3];
+            buttons = new Button[4];
 
-            buttons[0] = b_message;
-            buttons[1] = new Button(new Text(), "blank", false);
-            buttons[2] = b_back;
-
+            buttons[0] = b_new;
+            buttons[1] = b_load;
+            buttons[2] = new Button(new Text(), "blank", false);
+            buttons[3] = b_back;
+            
             foreach (Button b in buttons)
             {
                 b.Text.OutlineThickness = 1;

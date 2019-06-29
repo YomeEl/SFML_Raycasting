@@ -94,6 +94,7 @@
     <Compile Include="Game\GameObjects\Enemy.cs" />
     <Compile Include="Menu\Button.cs" />
     <Compile Include="Menu\MenuPage.cs" />
+    <Compile Include="Menu\Pages\EditorPage.cs" />
     <Compile Include="Menu\Pages\MainPage.cs" />
     <Compile Include="Menu\Pages\SettingsPage.cs" />
     <Compile Include="System\Enums.cs" />

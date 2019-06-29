@@ -11,7 +11,7 @@
             this.pos = pos;
             this.Direction = dir;
 
-            this.Direction.MakeUnit();
+            //this.Direction.MakeUnit();
         }
 
         public (Vector intersection, float u) CastTo(GameObject target)
