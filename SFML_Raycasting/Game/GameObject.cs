@@ -12,5 +12,7 @@ namespace Raycasting
         public Texture Texture { get => texture; set => texture = value; }
 
         public abstract (Vector A, Vector B) GetLine(Vector observedFrom);
+
+        public abstract Drawable EditorDraw(Vector cameraPos, float scale);
     }
 }

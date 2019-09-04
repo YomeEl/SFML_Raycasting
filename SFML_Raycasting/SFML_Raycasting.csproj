@@ -91,8 +91,11 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Editor\Editor.cs" />
+    <Compile Include="Editor\ToolbarButton.cs" />
+    <Compile Include="Editor\Toolbar.cs" />
     <Compile Include="Game\GameObjects\Enemy.cs" />
-    <Compile Include="Menu\Button.cs" />
+    <Compile Include="Menu\TextButton.cs" />
     <Compile Include="Menu\MenuPage.cs" />
     <Compile Include="Menu\Pages\EditorPage.cs" />
     <Compile Include="Menu\Pages\MainPage.cs" />
@@ -100,7 +103,7 @@
     <Compile Include="System\Enums.cs" />
     <Compile Include="Game\Game.cs" />
     <Compile Include="Game\GameObject.cs" />
-    <Compile Include="Engine\Graphics.cs" />
+    <Compile Include="Graphics\Graphics.cs" />
     <Compile Include="Game\Map.cs" />
     <Compile Include="Menu\Menu.cs" />
     <Compile Include="Game\Player.cs" />
@@ -111,10 +114,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Engine\Ray.cs" />
+    <Compile Include="Graphics\Ray.cs" />
     <Compile Include="System\Serializer.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="Engine\Textures.cs" />
+    <Compile Include="Graphics\Textures.cs" />
     <Compile Include="System\Vector.cs" />
     <Compile Include="Game\GameObjects\Wall.cs" />
   </ItemGroup>

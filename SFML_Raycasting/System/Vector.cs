@@ -102,5 +102,10 @@ namespace Raycasting
         {
             return new Vector(-a.Y, a.X);
         }
+
+        public override string ToString()
+        {
+            return $"X: {X}, Y: {Y}";
+        }
     }
 }

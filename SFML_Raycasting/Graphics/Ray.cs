@@ -2,26 +2,24 @@
 {
     class Ray
     {
-        Vector pos;
+        private readonly Vector Position;
 
         public Vector Direction { get; }
 
         public Ray(Vector pos, Vector dir)
         {
-            this.pos = pos;
-            this.Direction = dir;
-
-            //this.Direction.MakeUnit();
+            Position = pos;
+            Direction = dir;
         }
 
         public (Vector intersection, float u) CastTo(GameObject target)
         {
-            float x1 = pos.X;
-            float y1 = pos.Y;
-            float x2 = pos.X + Direction.X * 1000;
-            float y2 = pos.Y + Direction.Y * 1000;
+            float x1 = Position.X;
+            float y1 = Position.Y;
+            float x2 = Position.X + Direction.X * 1000;
+            float y2 = Position.Y + Direction.Y * 1000;
 
-            var (A, B) = target.GetLine(pos);
+            var (A, B) = target.GetLine(Position);
             float x3 = A.X;
             float y3 = A.Y;
             float x4 = B.X;

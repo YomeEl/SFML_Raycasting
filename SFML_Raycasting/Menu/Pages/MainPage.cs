@@ -9,7 +9,7 @@ namespace Raycasting
 
         public override MenuEvent OnMouseClick(MouseButtonEventArgs e)
         {
-            Button selected = GetSelectedButton();
+            TextButton selected = GetSelectedButton();
 
             if (selected != null && selected.Enabled)
             {
@@ -23,7 +23,6 @@ namespace Raycasting
 
                     case "Editor":
                         return MenuEvent.ShowEditor;
-                        break;
 
                     case "Settings":
                         return MenuEvent.ShowSettings;
@@ -43,13 +42,13 @@ namespace Raycasting
             Text t_settings = new Text("Settings", Settings.Menu.Font, Settings.Menu.FontSize);
             Text t_quit = new Text("Quit", Settings.Menu.Font, Settings.Menu.FontSize);
 
-            Button b_newGame = new Button(t_newGame, "NewGame", true);
-            Button b_loadGame = new Button(t_loadGame, "LoadGame", false);
-            Button b_editor = new Button(t_editor, "Editor", true);
-            Button b_settings = new Button(t_settings, "Settings", true);
-            Button b_quit = new Button(t_quit, "Quit", true);
+            TextButton b_newGame = new TextButton(t_newGame, "NewGame", true);
+            TextButton b_loadGame = new TextButton(t_loadGame, "LoadGame", false);
+            TextButton b_editor = new TextButton(t_editor, "Editor", true);
+            TextButton b_settings = new TextButton(t_settings, "Settings", true);
+            TextButton b_quit = new TextButton(t_quit, "Quit", true);
 
-            buttons = new Button[5];
+            buttons = new TextButton[5];
 
             buttons[0] = b_newGame;
             buttons[1] = b_loadGame;
@@ -57,7 +56,7 @@ namespace Raycasting
             buttons[3] = b_settings;
             buttons[4] = b_quit;
 
-            foreach (Button b in buttons)
+            foreach (TextButton b in buttons)
             {
                 b.Text.OutlineThickness = 1;
                 b.Text.OutlineColor = Color.Black;

@@ -9,6 +9,8 @@ namespace Raycasting
         Vector position = new Vector(0, 0);
         Vector anchor = new Vector(0, 0);
 
+        public bool Visible { get; private set; } = true;
+
         public Vector Anchor { get => anchor; set => UpdatePages(value, position); }
 
         public Vector Position { get => position; set => UpdatePages(anchor, value); }
@@ -67,6 +69,15 @@ namespace Raycasting
         public void Draw()
         {
             Pages[CurrentPage].Draw();
+        }
+
+        public void ToggleVisibility()
+        {
+            Visible = !Visible;
+            foreach (MenuPage p in Pages.Values)
+            {
+                p.Visible = Visible;
+            }
         }
 
         void UpdatePages(Vector anchor, Vector position)

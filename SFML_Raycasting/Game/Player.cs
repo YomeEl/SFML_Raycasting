@@ -13,14 +13,14 @@ namespace Raycasting
 
         public Player(Vector position)
         {
-            this.Position = position;
+            Position = position;
             Rotation = new Vector(1, 0);
         }
 
         public Player(Vector position, Vector rotation)
         {
-            this.Position = position;
-            this.Rotation = rotation;
+            Position = position;
+            Rotation = rotation;
         }
 
         public void LookAt(Vector coord)
@@ -47,7 +47,7 @@ namespace Raycasting
                     Position += left_rot * speed * dist;
                     break;
 
-                case Direction.Backward:
+                case Direction.Back:
                     Position -= Rotation * speed * dist;
                     break;
 

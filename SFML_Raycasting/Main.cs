@@ -1,4 +1,5 @@
 ﻿using System;
+
 using SFML.Window;
 using SFML.Graphics;
 using SFML.System;
@@ -9,6 +10,7 @@ namespace Raycasting
     {
         static Game game;
         static Menu menu;
+        static Editor editor;
         static Direction[] dir = { Direction.None, Direction.None, Direction.None, Direction.None };
         static RenderWindow win;
 
@@ -16,8 +18,12 @@ namespace Raycasting
 
         static bool fullscreen = false;
         static bool requestScreenModeChange = false;
-        static bool showMenu = true;
         static bool requestMenuModeChange = false;
+        static bool requestEditor = false;
+        static bool showEditor = false;
+        static bool played = false;
+
+        static Vector previousMousePos = new Vector();
 
         static void OnClose(object sender, EventArgs e)
         {
@@ -38,7 +44,7 @@ namespace Raycasting
                     break;
 
                 case Keyboard.Key.S:
-                    dir[2] = Direction.Backward;
+                    dir[2] = Direction.Back;
                     break;
 
                 case Keyboard.Key.A:
@@ -50,14 +56,28 @@ namespace Raycasting
                     break;
 
                 case Keyboard.Key.Escape:
-                    if (menu.CurrentPage == MenuPages.Main)
+                    if (showEditor)
                     {
-                        requestMenuModeChange = true;
+                        showEditor = false;
                     }
                     else
                     {
-                        menu.ReturnToMainPage();
-                        RecalculateMenuAnchor();
+                        if (menu.CurrentPage == MenuPages.Main)
+                        {
+                            if (played)
+                            {
+                                requestMenuModeChange = true;
+                            }
+                            else
+                            {
+                                win.Close();
+                            }
+                        }
+                        else
+                        {
+                            menu.ReturnToMainPage();
+                            RecalculateMenuAnchor();
+                        }
                     }
                     break;
             }
@@ -87,30 +107,66 @@ namespace Raycasting
 
         static void OnMouseButtonPressed(object sender, MouseButtonEventArgs e)
         {
-            if (showMenu)
+            if (e.Button == Mouse.Button.Left)
             {
-                switch (menu.ProcessMouseButtonClick(e))
+                previousMousePos = new Vector(e.X, e.Y);
+
+                if (menu.Visible && !showEditor)
                 {
-                    case MenuEvent.NewGame:
-                        requestMenuModeChange = true;
-                        break;
+                    switch (menu.ProcessMouseButtonClick(e))
+                    {
+                        case MenuEvent.NewGame:
+                            requestMenuModeChange = true;
+                            played = true;
+                            break;
 
-                    case MenuEvent.Idle:
-                        break;
+                        case MenuEvent.Editor_NewMap:
+                            Console.WriteLine("New map event");
+                            Map m = new Map();
+                            Serializer.Deserialize(out m, "Maps/map1.dat");
+                            editor.Open(m);
+                            requestEditor = true;
+                            break;
 
-                    case MenuEvent.Quit:
-                        win.Close();
-                        break;
+                        case MenuEvent.Idle:
+                            break;
 
-                    default:
-                        RecalculateMenuAnchor();
-                        break;
+                        case MenuEvent.Quit:
+                            win.Close();
+                            break;
+
+                        default:
+                            RecalculateMenuAnchor();
+                            break;
+                    }
+                }
+                else
+                {
+                    game.Shoot();
                 }
             }
-            else
+        }
+
+        static void OnMouseWheelScrolled(object sender, MouseWheelScrollEventArgs e)
+        {
+            if (showEditor)
             {
-                if (e.Button == Mouse.Button.Left) game.Shoot();
+                editor.Scale *= (float)Math.Pow(1.5, e.Delta);
             }
+        }
+
+        static void OnMouseMoved(object sender, MouseMoveEventArgs e)
+        {
+            var currentMousePos = new Vector(e.X, e.Y);
+            if (showEditor)
+            {
+                if (Mouse.IsButtonPressed(Mouse.Button.Left))
+                {
+                    var mouseDelta = currentMousePos - previousMousePos;
+                    editor.CameraPos = editor.CameraPos - mouseDelta * (1.9f / editor.Scale / 2);
+                }
+            }
+            previousMousePos = currentMousePos;
         }
 
         static void CreateWindow()
@@ -121,6 +177,8 @@ namespace Raycasting
                 win.KeyPressed -= OnKeyDown;
                 win.KeyReleased -= OnKeyUp;
                 win.MouseButtonPressed -= OnMouseButtonPressed;
+                win.MouseWheelScrolled -= OnMouseWheelScrolled;
+                win.MouseMoved -= OnMouseMoved;
 
                 win.Dispose();
                 win = null;
@@ -135,9 +193,18 @@ namespace Raycasting
             win.KeyPressed += OnKeyDown;
             win.KeyReleased += OnKeyUp;
             win.MouseButtonPressed += OnMouseButtonPressed;
+            win.MouseWheelScrolled += OnMouseWheelScrolled;
+            win.MouseMoved += OnMouseMoved;
 
             win.SetFramerateLimit(60);
-            win.SetMouseCursorVisible(showMenu);
+            if (menu != null)
+            {
+                win.SetMouseCursorVisible(menu.Visible);
+            }
+            else
+            {
+                win.SetMouseCursorVisible(true);
+            }
         }
 
         static void RecalculateMenuAnchor()
@@ -152,6 +219,7 @@ namespace Raycasting
             CreateWindow();
             game = new Game(win);
             menu = new Menu(win);
+            editor = new Editor(win);
             RecalculateMenuAnchor();
             menu.Position = new Vector(win.Size.X * 0.07f, win.Size.Y * 0.9f);
 
@@ -174,30 +242,61 @@ namespace Raycasting
 
                 if (win.HasFocus())
                 {
-                    if (!showMenu)
+                    if (!showEditor)
                     {
-                        game.RotatePlayer((Mouse.GetPosition().X - mouseX) * (float)(Math.PI / 360));
+                        if (!menu.Visible)
+                        {
+                            game.RotatePlayer((Mouse.GetPosition().X - mouseX) * (float)(Math.PI / 360));
 
-                        var center = win.GetView().Center;
-                        Mouse.SetPosition(new Vector2i((int)center.X, (int)center.Y), win);
-                        mouseX = Mouse.GetPosition().X;
+                            var center = win.GetView().Center;
+                            Mouse.SetPosition(new Vector2i((int)center.X, (int)center.Y), win);
+                            mouseX = Mouse.GetPosition().X;
 
+                            foreach (Direction d in dir)
+                            {
+                                if (d != Direction.None)
+                                {
+                                    game.MovePlayer(d, clock.ElapsedTime.AsMilliseconds());
+                                }
+                            }
+
+                            clock.Restart();
+
+                            game.Draw();
+                        }
+                        else
+                        {
+                            win.Draw(bgRect);
+                            menu.Draw();
+                        }
+                    }
+                    else
+                    {
                         foreach (Direction d in dir)
                         {
-                            if (d != Direction.None)
+                            float moveSpeed = 1.9f / editor.Scale;
+                            switch (d)
                             {
-                                game.MovePlayer(d, clock.ElapsedTime.AsMilliseconds());
+                                case Direction.Forward:
+                                    editor.CameraPos -= new Vector(0, clock.ElapsedTime.AsMilliseconds()) * moveSpeed;
+                                    break;
+
+                                case Direction.Right:
+                                    editor.CameraPos += new Vector(clock.ElapsedTime.AsMilliseconds(), 0) * moveSpeed;
+                                    break;
+
+                                case Direction.Back:
+                                    editor.CameraPos += new Vector(0, clock.ElapsedTime.AsMilliseconds()) * moveSpeed;
+                                    break;
+
+                                case Direction.Left:
+                                    editor.CameraPos -= new Vector(clock.ElapsedTime.AsMilliseconds(), 0) * moveSpeed;
+                                    break;
                             }
                         }
 
                         clock.Restart();
-
-                        game.Draw();
-                    }
-                    else
-                    {
-                        win.Draw(bgRect);
-                        menu.Draw();
+                        editor.Draw();
                     }
 
                     win.Display();
@@ -215,9 +314,9 @@ namespace Raycasting
                     
                     if (requestMenuModeChange)
                     {
-                        showMenu = !showMenu;
-                        win.SetMouseCursorVisible(showMenu);
-                        if (showMenu)
+                        menu.ToggleVisibility();
+                        win.SetMouseCursorVisible(menu.Visible);
+                        if (menu.Visible)
                         {
                             background.Dispose();
                             background = new Texture(win.Size.X, win.Size.Y);
@@ -233,6 +332,12 @@ namespace Raycasting
                             clock.Restart();
                         }
                         requestMenuModeChange = false;
+                    }
+
+                    if (requestEditor)
+                    {
+                        showEditor = true;
+                        requestEditor = false;
                     }
                 }
             }

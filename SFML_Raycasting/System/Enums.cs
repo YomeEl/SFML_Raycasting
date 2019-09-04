@@ -7,7 +7,7 @@
 
     enum Direction
     {
-        Forward, Right, Backward, Left, None
+        Forward, Right, Back, Left, None
     }
 
     enum MenuEvent
@@ -18,5 +18,10 @@
     enum MenuPages
     {
         Main, Settings, Editor
+    }
+
+    enum EditorAction
+    {
+        Move, PlaceEnemy, SetPlayerStartingPositon, PlaceWall
     }
 }

@@ -9,7 +9,7 @@ namespace Raycasting
 
         public override MenuEvent OnMouseClick(MouseButtonEventArgs e)
         {
-            Button selected = GetSelectedButton();
+            TextButton selected = GetSelectedButton();
 
             if (selected != null && selected.Enabled)
             {
@@ -27,16 +27,16 @@ namespace Raycasting
             Text t_message = new Text("Comming soon!", Settings.Menu.Font, Settings.Menu.FontSize);
             Text t_back = new Text("Back", Settings.Menu.Font, Settings.Menu.FontSize);
 
-            Button b_message = new Button(t_message, "Comming soon!", false);
-            Button b_back = new Button(t_back, "Back", true);
+            TextButton b_message = new TextButton(t_message, "Comming soon!", false);
+            TextButton b_back = new TextButton(t_back, "Back", true);
 
-            buttons = new Button[3];
+            buttons = new TextButton[3];
 
             buttons[0] = b_message;
-            buttons[1] = new Button(new Text(), "blank", false);
+            buttons[1] = new TextButton(new Text(), "blank", false);
             buttons[2] = b_back;
 
-            foreach (Button b in buttons)
+            foreach (TextButton b in buttons)
             {
                 b.Text.OutlineThickness = 1;
                 b.Text.OutlineColor = Color.Black;

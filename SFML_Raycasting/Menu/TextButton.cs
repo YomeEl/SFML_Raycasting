@@ -2,7 +2,7 @@
 
 namespace Raycasting
 {
-    class Button
+    class TextButton
     {
         public Text Text { get; }
 
@@ -10,11 +10,11 @@ namespace Raycasting
 
         public bool Enabled { get; set; }
 
-        public Button(Text text, string name, bool enabled)
+        public TextButton(Text text, string name, bool enabled)
         {
-            this.Text = text;
-            this.Name = name;
-            this.Enabled = enabled;
+            Text = text;
+            Name = name;
+            Enabled = enabled;
         }
     }
 }

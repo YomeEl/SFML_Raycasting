@@ -6,7 +6,7 @@ namespace Raycasting
 {
     class Graphics
     {
-        RenderWindow win;
+        private RenderWindow win;
         private Ray[] rays;
 
         public Graphics(RenderWindow win)

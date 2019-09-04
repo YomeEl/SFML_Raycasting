@@ -8,10 +8,12 @@ namespace Raycasting
     {
         RenderWindow win;
 
-        protected Button[] buttons;
+        protected TextButton[] buttons;
 
         Vector position = new Vector(0, 0);
         Vector anchor = new Vector(0, 0);
+
+        public bool Visible { get; set; } = true;
 
         public Vector Anchor
         {
@@ -47,27 +49,27 @@ namespace Raycasting
 
         public abstract MenuEvent OnMouseClick(MouseButtonEventArgs e);
 
-        bool IsMouseHovering(Button b)
+        bool IsMouseHovering(TextButton b)
         {
             Vector2i mousePos = Mouse.GetPosition(win);
             FloatRect bounds = new FloatRect(b.Text.Position.X, b.Text.Position.Y, b.Text.GetLocalBounds().Width, Settings.Menu.FontSize - 6);
             bounds.Height += Settings.Menu.FontSize / 4;
 
-            return bounds.Contains(mousePos.X, mousePos.Y);
+            return Visible && bounds.Contains(mousePos.X, mousePos.Y);
         }
 
-        void SetTextColor(Button b)
+        void SetTextColor(TextButton b)
         {
             b.Text.FillColor = b.Enabled ? IsMouseHovering(b) ? Settings.Menu.SelectedColor : Settings.Menu.NotSelectedColor : Settings.Menu.DisabledColor;
         }
 
         protected abstract void CreateButtons();
 
-        protected Button GetSelectedButton()
+        protected TextButton GetSelectedButton()
         {
-            Button selected = null;
+            TextButton selected = null;
 
-            foreach (Button b in buttons)
+            foreach (TextButton b in buttons)
             {
                 if (IsMouseHovering(b))
                 {
@@ -97,7 +99,7 @@ namespace Raycasting
 
         public void Draw()
         {
-            foreach (Button b in buttons)
+            foreach (TextButton b in buttons)
             {
                 SetTextColor(b);
                 win.Draw(b.Text);
