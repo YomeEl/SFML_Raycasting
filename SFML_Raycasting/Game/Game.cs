@@ -45,26 +45,26 @@
         {
             var bullet = new Ray(player.Position, player.Rotation);
             GameObject hit = null;
-            foreach (GameObject go in map.Objects)
+            foreach (GameObject obj in map.Objects)
             {
-                if (!(go is Wall))
+                if (!(obj is Wall))
                 {
-                    var intersectionInfo = bullet.CastTo(go);
+                    var intersectionInfo = bullet.CastTo(obj);
                     if (intersectionInfo.intersection != null)
                     {
-                        hit = go;
+                        hit = obj;
                     }
                 }
             }
             if (hit != null)
             {
-                map.Objects.Remove(hit);
+                //map.Objects.Remove(hit);
             }
         }
 
         public void Draw()
         {
-            graphics.Draw(player, map.Objects.ToArray());
+            graphics.Draw(player, map.Objects);
         }
     }
 }

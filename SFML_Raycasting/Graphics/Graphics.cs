@@ -20,6 +20,7 @@ namespace Raycasting
             dir.Rotate(-Settings.Player.FOV / 2);
 
             width /= (int)Settings.Drawing.Quality;
+
             if (rays == null || rays.Length != width + 1)
             {
                 rays = new Ray[width + 1];
@@ -27,8 +28,7 @@ namespace Raycasting
 
             for (int i = 0; i <= width; i++)
             {
-                var r = new Ray(player.Position, new Vector(dir));
-                rays[i] = r;
+                rays[i] = new Ray(player.Position, new Vector(dir));
                 dir.Rotate(Settings.Player.FOV / width);
             }
         }
@@ -61,7 +61,7 @@ namespace Raycasting
             RectangleShape rect = new RectangleShape(new Vector2f((int)Settings.Drawing.Quality, 0));
             for (int i = 0; i < rays.Length; i++)
             {
-                var nonWallIntersections = new List<(Vector intersection, float u, GameObject gameObject)>();
+                var entitiesIntersections = new List<(Vector intersection, float u, GameObject gameObject)>();
                 (Vector intersection, float u) closestWallInfo = (null, 0);
                 GameObject closestObject = null;
                 float distToClosestWall = float.MaxValue;
@@ -82,37 +82,29 @@ namespace Raycasting
                         }
                         else
                         {
-                            nonWallIntersections.Add((intersectionInfo.intersection, intersectionInfo.u, obj));
+                            entitiesIntersections.Add((intersectionInfo.intersection, intersectionInfo.u, obj));
                         }
                     }
                 }
 
-                var doNotDraw = new List<(Vector intersection, float u, GameObject gameObject)>();
-                foreach (var intersectionInfo in nonWallIntersections)
-                {
-                    if (closestWallInfo.intersection != null &&
-                        Vector.Distance(player.Position, intersectionInfo.intersection) > Vector.Distance(player.Position, closestWallInfo.intersection))
-                    {
-                        doNotDraw.Add(intersectionInfo);
-                    }
-                }
-                foreach (var elem in doNotDraw)
-                {
-                    nonWallIntersections.Remove(elem);
-                }
-
+                var invisibleObjects = new List<(Vector intersection, float u, GameObject gameObject)>();
                 if (closestWallInfo.intersection != null)
                 {
-                    float dist = Vector.Distance(player.Position, closestWallInfo.intersection);
-                    dist *= Vector.Cos(rays[i].Direction, player.Rotation);
-
+                    foreach (var intersectionInfo in entitiesIntersections)
+                    {
+                        if (Vector.Distance(player.Position, intersectionInfo.intersection) > distToClosestWall)
+                        {
+                            invisibleObjects.Add(intersectionInfo);
+                        }
+                    }
+                
                     rect.Texture = closestObject.Texture;
                     int left = (int)(rect.Texture.Size.X * closestWallInfo.u);
                     int w = (int)rect.Size.X;
                     int h = (int)rect.Texture.Size.Y;
                     rect.TextureRect = new IntRect(left, 0, w, h);
 
-                    float wallHeight = Settings.Drawing.WallHeight / dist;
+                    float wallHeight = Settings.Drawing.WallHeight / distToClosestWall / Vector.Cos(rays[i].Direction, player.Rotation);
                     float center = win.Size.Y / 2;
                     rect.Position = new Vector2f(i * (int)Settings.Drawing.Quality, center - wallHeight / 2);
                     rect.Size = new Vector2f(rect.Size.X, wallHeight);
@@ -120,14 +112,14 @@ namespace Raycasting
                     win.Draw(rect);
                 }
 
-                foreach (var (intersection, u, gameObject) in nonWallIntersections)
+                foreach (var intersectionInfo in entitiesIntersections)
                 {
-                    if (intersection != null)
+                    if (intersectionInfo.intersection != null && !invisibleObjects.Contains(intersectionInfo))
                     {
-                        float dist = Vector.Distance(player.Position, intersection);
+                        float dist = Vector.Distance(player.Position, intersectionInfo.intersection);
 
-                        rect.Texture = gameObject.Texture;
-                        int left = (int)(rect.Texture.Size.X * u);
+                        rect.Texture = intersectionInfo.gameObject.Texture;
+                        int left = (int)(rect.Texture.Size.X * intersectionInfo.u);
                         int w = (int)rect.Size.X;
                         int h = (int)rect.Texture.Size.Y;
                         rect.TextureRect = new IntRect(left, 0, w, h);

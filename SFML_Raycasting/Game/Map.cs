@@ -8,11 +8,10 @@ namespace Raycasting
     {
         public Map()
         {
-            Objects = new List<GameObject>();
             StartPosition = new Vector(0, 0);
         }
 
-        public List<GameObject> Objects { get; set; }
+        public GameObject[] Objects { get; set; }
 
         public Vector StartPosition { get; private set; }
 
@@ -20,17 +19,21 @@ namespace Raycasting
         {
             float size = 10f;
 
-            Objects.Add(new Wall(0,      0,      size,   0   ));
-            Objects.Add(new Wall(size,   0,      size,   size));
-            Objects.Add(new Wall(size,   size,   0,      size));
-            Objects.Add(new Wall(0,      size,   0,      0   ));
-            for (int i = 0; i < 0; i++)
+            var mapObjects = new List<GameObject>();
+            mapObjects.Add(new Wall(0,      0,      size,   0   ));
+            mapObjects.Add(new Wall(size,   0,      size,   size));
+            mapObjects.Add(new Wall(size,   size,   0,      size));
+            mapObjects.Add(new Wall(0,      size,   0,      0   ));
+            for (int i = 0; i < 100; i++)
             {
-                Objects.Add(new Wall(0, size, 0, 0));
+                mapObjects.Add(new Wall(0, size, 0, 0));
             }
 
-            Objects.Add(new Enemy(new Vector(5, 5)));
-            Objects.Add(new Enemy(new Vector(-5, -5)));
+            mapObjects.Add(new Enemy(new Vector(5, 5)));
+            mapObjects.Add(new Enemy(new Vector(6, 6)));
+            mapObjects.Add(new Enemy(new Vector(-5, -5)));
+
+            Objects = mapObjects.ToArray();
 
             StartPosition = new Vector(0.5f, 0.5f);
         }

@@ -16,8 +16,8 @@
         {
             float x1 = Position.X;
             float y1 = Position.Y;
-            float x2 = Position.X + Direction.X * 1000;
-            float y2 = Position.Y + Direction.Y * 1000;
+            float x2 = Position.X + Direction.X;
+            float y2 = Position.Y + Direction.Y;
 
             var (A, B) = target.GetLine(Position);
             float x3 = A.X;
